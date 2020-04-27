@@ -1,0 +1,39 @@
+<div th:fragment="login" xmlns:th="http://www.w3.org/1999/xhtml">
+    <div th:with="isRegisterForm='http://localhost:8080/registration', path=${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}">
+        <form th:action="@{${T(org.springframework.web.servlet.support.ServletUriComponentsBuilder).fromCurrentRequest()}}" th:object="${user}" method="post">
+            <div class="form-group">
+                <label class="col-sm-2 col-form-label"> User Name:</label>
+                <div class="col-sm-6">
+                    <input th:class="${#fields.hasErrors('username')} ? 'form-control is-invalid' : 'form-control'"  type="text" name="username" th:field="*{username}" placeholder="Your Username"/>
+                    <b th:if="${#fields.hasErrors('username')}" th:class="${#fields.hasErrors('username')} ? 'invalid-feedback':''" th:errors="*{username}">Username error</b>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-2 col-form-label"> Password:</label>
+                <div class="col-sm-6">
+                    <input th:class="${#fields.hasErrors('password')} ? 'form-control is-invalid' : 'form-control'"  type="password" name="password" th:field="*{password}" placeholder="Your Password"/>
+                    <b th:if="${#fields.hasErrors('password')}" th:class="${#fields.hasErrors('password')} ? 'invalid-feedback':''" th:errors="*{password}">Password error</b>
+                </div>
+            </div>
+            <div th:if="${isRegisterForm}==${path}">
+                <div class="form-group">
+                    <label class="col-sm-2 col-form-label">Repeat Password:</label>
+                    <div class="col-sm-6">
+                        <input th:class="${password2Error} ? 'form-control is-invalid' : 'form-control'" type="password" name="password2" placeholder="Repeat Password"/>
+                        <div th:class="${password2Error} ? 'invalid-feedback':''">
+                            <b th:text="${password2Error}" />
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 col-form-label"> Email:</label>
+                    <div class="col-sm-6">
+                        <input th:class="${#fields.hasErrors('email')} ? 'form-control is-invalid' : 'form-control'" th:field="*{email}" type="text" name="email" placeholder="some@some.com"/>
+                        <b th:if="${#fields.hasErrors('email')}" th:class="${#fields.hasErrors('email')} ? 'invalid-feedback':''" th:errors="*{email}">Email error</b>
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-sm btn-outline-secondary">Registration</button>
+        </form>
+    </div>
+</div>

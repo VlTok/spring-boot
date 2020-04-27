@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:insert="blocks/head :: head">
+</head>
+<body>
+<header th:insert="blocks/header :: header"></header>
+<div class="jumbotron w-50 mx-auto my-5">
+    <h1>Welcome, user</h1>
+    <h4>This is the best web-application ever!</h4>
+</div>
+<div th:insert="blocks/footer :: footer"></div>
+</body>
+</html>

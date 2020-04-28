@@ -9,12 +9,18 @@
     <h1>Статья</h1>
     <div th:each="el : ${post}" class="alert alert-info mt-2">
         <h3 th:text="${el.title}"/>
+        <div th:if="${not #lists.isEmpty(el.filename)}">
+            <img th:src="'/img/' + ${el.filename}">
+        </div>
         <p th:text="${el.full_text}"/>
+        <strong th:text="${el.authorName}"></strong>
         <p><b>Просмотры: </b><span th:text="${el.views}"/></p>
+        <div th:if="${isCurrentUser}">
             <a th:href="'/blog/' + ${el.id} + '/edit'" class="btn btn-warning">Редактировать</a><br><br>
             <form th:action="'/blog/'+ ${el.id} + '/remove'" method="post">
                 <button class="btn btn-warning">Удалить</button>
             </form>
+        </div>
     </div>
 </div>
 

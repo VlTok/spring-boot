@@ -64,20 +64,7 @@ public class BlogController {
             model.addAttribute("message",post);
             return "blog-add";
         }else {
-            if (file != null && !file.getOriginalFilename().isEmpty()) {
-                File uploadDir = new File(uploadPath);
-
-                if (!uploadDir.exists()) {
-                    uploadDir.mkdir();
-                }
-
-                String uuidFile = UUID.randomUUID().toString();
-                String resultFilename = uuidFile + "." + file.getOriginalFilename();
-
-                file.transferTo(new File(uploadPath + "/" + resultFilename));
-
-                post.setFilename(resultFilename);
-            }
+            saveFile(post,file);
             model.addAttribute("message", null);
 
             postRepository.save(post);
@@ -86,15 +73,33 @@ public class BlogController {
         return "redirect:/blog";
     }
 
-    @GetMapping("/blog/{id}")
-    public String blogDetails(@PathVariable(value = "id") long id, Model model){
-        if(!postRepository.existsById(id)){
+    private void saveFile(@Valid Post post, @RequestParam("file") MultipartFile file) throws IOException {
+        if (file != null && !file.getOriginalFilename().isEmpty()) {
+            File uploadDir = new File(uploadPath);
+
+            if (!uploadDir.exists()) {
+                uploadDir.mkdir();
+            }
+
+            String uuidFile = UUID.randomUUID().toString();
+            String resultFilename = uuidFile + "." + file.getOriginalFilename();
+
+            file.transferTo(new File(uploadPath + "/" + resultFilename));
+
+            post.setFilename(resultFilename);
+        }
+    }
+
+    @GetMapping("/blog/{post}")
+    public String blogDetails(@AuthenticationPrincipal User currentUser,@PathVariable Post post, Model model){
+        if(!postRepository.existsById(post.getId())){
             return "redirect:/blog";
         }
-        Optional <Post> post= postRepository.findById(id);
+        Optional <Post> user_post= postRepository.findById(post.getId());
         ArrayList <Post> res= new ArrayList<>();
-        post.ifPresent(res::add);
+        user_post.ifPresent(res::add);
         model.addAttribute("post", res);
+        model.addAttribute("isCurrentUser",currentUser.equals(post.getAuthor()));
         return "blog-details";
     }
 
@@ -111,23 +116,31 @@ public class BlogController {
         return "blog-edit";
     }
 
-    @PostMapping("/blog/{id}/edit")
-    public String blogPostUpdate(@PathVariable(value="id") long id, @RequestParam String  title,@RequestParam String  anons,@RequestParam String  full_text, Model model){
-        Post post = postRepository.findById(id).orElseThrow();
-        post.setTitle(title);
-        post.setAnons(anons);
-        post.setFull_text(full_text);
+    @PostMapping("/blog/{post}/edit")
+    public String blogPostUpdate(@AuthenticationPrincipal User currentUser,
+                                 @PathVariable Post post,
+                                 @RequestParam String  title,
+                                 @RequestParam String  anons,
+                                 @RequestParam String  full_text,
+                                 @RequestParam MultipartFile file,
+                                 Model model
+    ) throws IOException {
+        if (post.getAuthor().equals(currentUser)) {
+            post.setTitle(title);
+            post.setAnons(anons);
+            post.setFull_text(full_text);
 
-        postRepository.save(post);
-
+            saveFile(post, file);
+            postRepository.save(post);
+        }
         return "redirect:/blog";
     }
 
-    @PostMapping("/blog/{id}/remove")
-    public String blogPostDelete(@PathVariable(value="id") long id, Model model){
-        Post post = postRepository.findById(id).orElseThrow();
-        postRepository.delete(post);
-
+    @PostMapping("/blog/{post}/remove")
+    public String blogPostDelete(@AuthenticationPrincipal User currentUser, @PathVariable Post post, Model model){
+        if (post.getAuthor().equals(currentUser)) {
+            postRepository.delete(post);
+        }
         return "redirect:/blog";
     }
 

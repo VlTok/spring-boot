@@ -8,10 +8,14 @@
 <div class="container mt-5 mb-5">
     <h1>Редктирование статьи</h1>
     <div th:each="el : ${post}">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <input type="text" th:value="${el.title}" name="title" placeholder="Введите название статьи" class="form-control"><br>
             <input type="text" th:value="${el.anons}" name="anons" placeholder="Введите анонс статьи" class="form-control"><br>
             <textarea name="full_text" placeholder="Введите полный текст статьи" class="form-control" th:text="${el.full_text}" /><br>
+            <div class="custom-file">
+                <input type="file" th:value="${el.filename}" name="file" id="customFile">
+                <label class="custom-file-label" for="customFile">Choose file</label>
+            </div><br>
             <button type="submit" class="btn btn-success">Обновить</button>
         </form>
     </div>

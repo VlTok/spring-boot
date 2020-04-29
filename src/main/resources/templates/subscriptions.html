@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:insert="blocks/head :: head">
+</head>
+<body>
+<header th:insert="blocks/header :: header"></header>
+<h3 th:text="${userChannel.username}"></h3>
+<div th:text="${type}"></div>
+<ul class="list-group" th:each="el: ${users}">
+    <li class="list-group-item">
+        <a th:href="'/user-posts/'+${el.id}" th:text="${el.username}"></a>
+    </li>
+</ul>
+
+<div th:insert="blocks/footer :: footer"></div>
+</body>
+</html>

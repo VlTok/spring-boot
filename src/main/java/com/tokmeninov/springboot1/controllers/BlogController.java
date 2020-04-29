@@ -96,10 +96,13 @@ public class BlogController {
             return "redirect:/blog";
         }
         Optional <Post> user_post= postRepository.findById(post.getId());
+        User author=post.getAuthor();
         ArrayList <Post> res= new ArrayList<>();
         user_post.ifPresent(res::add);
-        model.addAttribute("post", res);
+        model.addAttribute("userChannel",post.getAuthor());
+        model.addAttribute("isSubscriber",author.getSubscribers().contains(currentUser));
         model.addAttribute("isCurrentUser",currentUser.equals(post.getAuthor()));
+        model.addAttribute("post", res);
         return "blog-details";
     }
 
@@ -150,7 +153,9 @@ public class BlogController {
             Model model
     ){
         Set<Post> posts=user.getPosts();
-        model.addAttribute("username",user.getUsername());
+        model.addAttribute("subscriptionsCount",user.getSubscriptions().size());
+        model.addAttribute("subscribersCount",user.getSubscribers().size());
+        model.addAttribute("userChannel",user);
         model.addAttribute("posts",posts);
 
         return "user-posts";

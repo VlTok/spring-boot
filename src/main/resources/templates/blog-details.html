@@ -7,8 +7,16 @@
 
 <div class="container mt-5">
     <h1>Статья</h1>
+    <div th:unless="${isCurrentUser}">
+        <div th:if="${isSubscriber}">
+            <a class="btn btn-danger" th:href="'/user/unsubscribe/'+${userChannel.id}">UnSubscribe</a>
+        </div>
+        <div th:unless="${isSubscriber}">
+            <a class="btn btn-success" th:href="'/user/subscribe/'+${userChannel.id}">Subscribe</a>
+        </div>
+    </div>
     <div th:each="el : ${post}" class="alert alert-info mt-2">
-        <h3 th:text="${el.title}"/>
+        <h3 th:text="${el.title}"></h3>
         <div th:if="${not #lists.isEmpty(el.filename)}">
             <img th:src="'/img/' + ${el.filename}">
         </div>
